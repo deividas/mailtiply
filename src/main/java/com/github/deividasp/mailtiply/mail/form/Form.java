@@ -5,6 +5,8 @@ import com.github.deividasp.mailtiply.mail.form.element.field.InputFieldType;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public abstract class Form {
 
@@ -25,6 +27,18 @@ public abstract class Form {
     public List<InputField> getFields() {
         InputField[] fields = getClass().getDeclaredAnnotationsByType(InputField.class);
         return Arrays.asList(fields);
+    }
+
+    public List<InputField> getFieldsExcept(InputFieldType... types) {
+        List<InputFieldType> excludedTypes = Arrays.asList(types);
+
+        return getFields().stream()
+                .filter(f -> !excludedTypes.contains(f.type()))
+                .collect(Collectors.toList());
+    }
+
+    public Optional<InputField> getField(InputFieldType type) {
+        return getFields().stream().filter(f -> f.type() == type).findAny();
     }
 
 }
